@@ -54,6 +54,9 @@ public class Conta {
      */
     public void depositar(double valor) {
         validarValorPositivo(valor);
+        if (!ativa) {
+            throw new IllegalStateException("Não é possível depositar em uma conta inativa.");
+        }
         saldo += valor;
     }
 
@@ -67,6 +70,9 @@ public class Conta {
      */
     public void sacar(double valor) {
         validarValorPositivo(valor);
+        if (!ativa) {
+            throw new IllegalStateException("Não é possível sacar de uma conta inativa.");
+        }
         if (valor > saldo) {
             throw new IllegalStateException("Saldo insuficiente para realizar o saque.");
         }
