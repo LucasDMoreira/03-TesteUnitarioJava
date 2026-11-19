@@ -140,6 +140,48 @@ class ContaTest {
     //    - Saque em conta inativa lança IllegalStateException
     // =======================================================
 
+    @Test
+    void sacar_ValorValido_AtualizaSaldo() {
+        // Arrange
+        var conta = new Conta("Maria", 100);
+
+        // Act
+        conta.sacar(40);
+
+        // Assert
+        assertEquals(60, conta.getSaldo(), 0.001);
+    }
+
+    @Test
+    void sacar_ValorZero_LancaIllegalArgumentException() {
+        // Arrange
+        var conta = new Conta("Maria", 100);
+
+        // Act & Assert
+        assertThrows(IllegalArgumentException.class, () -> conta.sacar(0));
+        assertEquals(100, conta.getSaldo(), 0.001);
+    }
+
+    @Test
+    void sacar_ValorNegativo_LancaIllegalArgumentException() {
+        // Arrange
+        var conta = new Conta("Maria", 100);
+
+        // Act & Assert
+        assertThrows(IllegalArgumentException.class, () -> conta.sacar(-10));
+        assertEquals(100, conta.getSaldo(), 0.001);
+    }
+
+    @Test
+    void sacar_ValorMaiorQueSaldo_LancaIllegalStateException() {
+        // Arrange
+        var conta = new Conta("Maria", 100);
+
+        // Act & Assert
+        assertThrows(IllegalStateException.class, () -> conta.sacar(101));
+        assertEquals(100, conta.getSaldo(), 0.001);
+    }
+
 
     // =======================================================
     //  Testes para transferir
