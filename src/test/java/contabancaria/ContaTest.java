@@ -214,7 +214,82 @@ class ContaTest {
     //    - Transferência com conta origem inativa lança exceção
     //    - Transferência com conta destino inativa lança exceção
     // =======================================================
+    @Test
+    void transferir_ValorValido_AtualizaSaldoDeAmbasContas() {
+        // Arrange
+        var origem = new Conta("Maria", 200);
+        var destino = new Conta("João", 100);
 
+        // Act
+        origem.transferir(destino, 50);
+
+        // Assert
+        assertEquals(150, origem.getSaldo(), 0.001);
+        assertEquals(150, destino.getSaldo(), 0.001);
+    }
+    
+    @Test
+    void transferir_ValorZero_LancaIllegalArgumentException() {
+        // Arrange
+        var origem = new Conta("Maria", 200);
+        var destino = new Conta("João", 100);
+
+        // Act & Assert
+        assertThrows(IllegalArgumentException.class, () -> origem.transferir(destino, 0));
+        assertEquals(200, origem.getSaldo(), 0.001);
+        assertEquals(100, destino.getSaldo(), 0.001);
+    }
+
+    @Test
+    void transferir_ValorNegativo_LancaIllegalArgumentException() {
+        // Arrange
+        var origem = new Conta("Maria", 200);
+        var destino = new Conta("João", 100);
+
+        // Act & Assert
+        assertThrows(IllegalArgumentException.class, () -> origem.transferir(destino, -10));
+        assertEquals(200, origem.getSaldo(), 0.001);
+        assertEquals(100, destino.getSaldo(), 0.001);
+    }
+
+    @Test
+    void transferir_SaldoInsuficiente_LancaIllegalStateException() {
+        // Arrange
+        var origem = new Conta("Maria", 200);
+        var destino = new Conta("João", 100);
+
+        // Act & Assert
+        assertThrows(IllegalStateException.class, () -> origem.transferir(destino, 201));
+        assertEquals(200, origem.getSaldo(), 0.001);
+        assertEquals(100, destino.getSaldo(), 0.001);
+    }
+
+    @Test
+    void transferir_ContaOrigemInativa_LancaIllegalStateException() {
+        // Arrange
+        var origem = new Conta("Maria");
+        origem.encerrar();
+        var destino = new Conta("João", 100);
+
+        // Act & Assert
+        assertThrows(IllegalStateException.class, () -> origem.transferir(destino, 50));
+        assertEquals(0, origem.getSaldo(), 0.001);
+        assertEquals(100, destino.getSaldo(), 0.001);
+    }
+
+    @Test
+    void transferir_ContaDestinoInativa_LancaIllegalStateException() {
+        // Arrange
+        var origem = new Conta("Maria", 200);
+        var destino = new Conta("João");
+        destino.encerrar();
+
+        // Act & Assert
+        assertThrows(IllegalStateException.class, () -> origem.transferir(destino, 50));
+        assertEquals(200, origem.getSaldo(), 0.001);
+        assertEquals(0, destino.getSaldo(), 0.001);
+    }
+    
 
     // =======================================================
     //  Testes para encerrar
