@@ -3,6 +3,7 @@ package contabancaria;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -97,7 +98,37 @@ class ContaTest {
     //    - Depósito com valor negativo lança IllegalArgumentException
     //    - Depósito em conta inativa lança IllegalStateException
     // =======================================================
+    @Test
+    void depositar_ValorValido_AtualizaSaldo() {
+        // Arrange
+        var conta = new Conta("Maria", 100);
 
+        // Act
+        conta.depositar(50);
+
+        // Assert
+        assertEquals(150, conta.getSaldo(), 0.001);
+    }
+
+    @Test
+    void depositar_ValorZero_LancaIllegalArgumentException() {
+        // Arrange
+        var conta = new Conta("Maria", 100);
+
+        // Act & Assert
+        assertThrows(IllegalArgumentException.class, () -> conta.depositar(0));
+        assertEquals(100, conta.getSaldo(), 0.001);
+    }
+
+    @Test
+    void depositar_ValorNegativo_LancaIllegalArgumentException() {
+        // Arrange
+        var conta = new Conta("Maria", 100);
+
+        // Act & Assert
+        assertThrows(IllegalArgumentException.class, () -> conta.depositar(-10));
+        assertEquals(100, conta.getSaldo(), 0.001);
+}
 
     // =======================================================
     //  Testes para sacar
